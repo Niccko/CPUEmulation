@@ -5,13 +5,13 @@
 #include <iostream>
 #include "Bus.h"
 
-void Bus::write(uint16_t addr, uint16_t data) {
-    if (addr >= 0x0000 and addr <= 0xFFFF)
+void Bus::write(uint8_t addr, uint32_t data) {
+    if (addr >= 0x00 and addr <= 0xFF)
         ram[addr] = data;
 }
 
-uint16_t Bus::read(uint16_t addr) {
-    if (addr >= 0x0000 and addr <= 0xFFFF)
+uint32_t Bus::read(uint8_t addr) {
+    if (addr >= 0x00 and addr <= 0xFF)
         return ram[addr];
     return 0;
 }

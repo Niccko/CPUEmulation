@@ -18,10 +18,10 @@ public:
 public:
     CPU cpu;
 public:
-    std::array<uint16_t , 64 * 1024> ram{};
+    std::array<uint32_t , 256> ram{};
 
-    void write(uint16_t addr, uint16_t data);
-    uint16_t read(uint16_t addr);
+    void write(uint8_t addr, uint32_t data);
+    uint32_t read(uint8_t addr);
 };
 
 

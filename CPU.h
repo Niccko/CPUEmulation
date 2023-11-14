@@ -19,21 +19,18 @@ public:
 
     void connectBus(Bus *b) { bus = b; }
 
-    uint16_t read(uint16_t addr);
+    uint32_t read(uint8_t addr);
 
-    void write(uint16_t addr, uint16_t data);
+    void write(uint8_t addr, uint32_t data);
 
     void clock();
 
-    uint16_t fetch();
+    uint32_t fetch();
 
 public:
-    std::array<uint16_t, 16> op_registers{};
-    uint8_t a_reg_addr = 0x00;
-    uint8_t b_reg_addr = 0x00;
-    uint8_t x_reg_addr = 0x00;
+    std::array<uint32_t , 8> registers{};
     uint8_t status = 0x00; //Status register
-    uint16_t pc = 0x0000; // Program counter
+    uint8_t pc = 0x00; // Program counter
 
     enum FLAGS
     {
@@ -52,18 +49,25 @@ private:
 
     Bus *bus = nullptr;
     uint8_t opcode;
-    uint8_t addr;
+    uint16_t fetched;
 
 private:
-    uint8_t LD();
+    // Commands
+    uint8_t LDR();
     uint8_t CMP();
-    uint8_t JMP();
-    uint8_t STX();
+    uint8_t JMN();
+    uint8_t STR();
+
+    //Addressing modes
+    void DIR();
+    void MEM();
+    void IMP();
 
     struct INSTRUCTION
     {
         std::string name;
         uint8_t     (CPU::*exec )(void) = nullptr;
+        void (CPU::*addr_mode )(void) = nullptr;
     };
 
     std::vector<INSTRUCTION> op_table;
