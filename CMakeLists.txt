@@ -8,5 +8,7 @@ add_executable(CPU main.cpp
         Bus.h
         CPU.cpp
         CPU.h
+        XASM.cpp
+        XASM.h
 
 )
