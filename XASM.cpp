@@ -12,15 +12,30 @@ void XASM::parse(const string &path) {
     ifs.open(path);
     string line;
     if (ifs.is_open()) {
-        regex reg("");
-        uint8_t addr = 0;
         while (getline(ifs, line)) {
-            if (line.starts_with("//")) continue;
-
-            writeDirective(line, &addr);
-
+            if (line.starts_with("//") or line.empty()) continue;
+            program.push_back(line);
         }
         ifs.close();
+    }
+    uint8_t addr = 0;
+    // Define jump points
+    for (int i = 0; i < program.size(); i++) {
+        if (program[i].starts_with("proc")){
+            string proc_name = program[i].substr(5, program[i].length());
+            procedures[proc_name] = addr;
+            program.erase(program.begin() + i);
+            i--;
+
+        }
+
+        if (!program[i].starts_with("MEM")) addr++;
+    }
+    // Write program to memory
+    addr = 0;
+    for (auto l: program) {
+        writeDirective(l, &addr);
+
     }
 }
 
@@ -55,15 +70,25 @@ void XASM::writeDirective(const string &com, uint8_t *com_addr) {
                     return instruction.name == op;
                 });
         int op_index = std::distance(cpu->op_table.begin(), it);
-        stringstream ss(data);
-        string a,b,c;
-        getline(ss, a, ' ');
-        getline(ss, b, ' ');
-        getline(ss, c, ' ');
 
-        auto a_op = (uint8_t) stoul(a, nullptr, 16);
-        auto b_op = (uint8_t) stoul(b, nullptr, 16);
-        auto c_op = (uint8_t) stoul(c, nullptr, 16);
+        uint8_t a_op = 0;
+        uint8_t b_op = 0;
+        uint8_t c_op = 0;
+        if ((op == "JMP" or op == "JMN" or op == "JM0" or op == "JMDN") && procedures.contains(data)){
+            a_op = procedures[data];
+        } else {
+            stringstream ss(data);
+            string a,b,c;
+            getline(ss, a, ' ');
+            getline(ss, b, ' ');
+            getline(ss, c, ' ');
+
+            a_op = (uint8_t) stoul(a, nullptr, 16);
+            b_op = (uint8_t) stoul(b, nullptr, 16);
+            c_op = (uint8_t) stoul(c, nullptr, 16);
+        }
+
+
 
         cpu->write(*com_addr, op_index << 24 | a_op << 16 | b_op << 8 | c_op);
 

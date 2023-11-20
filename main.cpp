@@ -11,7 +11,7 @@ int main() {
 
     xasm.parse("../program.xasm");
 
-    for (int i = 0; i < 3000; ++i) {
+    for (int i = 0; i < 300; ++i) {
         cpu->clock();
     }
 

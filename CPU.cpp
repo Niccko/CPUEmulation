@@ -16,17 +16,18 @@ CPU::CPU() {
             {"CMPI", &CPU::CMPI},  //0x02
 
             {"JMN",  &CPU::JMN},   //0x03
+            {"JMDN",  &CPU::JMDN},   //0x03
             {"JMP",  &CPU::JMP},   //0x04
             {"JM0",  &CPU::JM0},   //0x05
-            {"JMD0",  &CPU::JMD0},   //0x05
+            {"JMD0",  &CPU::JMD0}, //0x06
 
-            {"MOV",  &CPU::MOV},   //0x06
-            {"MOVL", &CPU::MOVL},  //0x07
-            {"MOVI", &CPU::MOVI},  //0x08
+            {"MOV",  &CPU::MOV},   //0x07
+            {"MOVL", &CPU::MOVL},  //0x08
+            {"MOVI", &CPU::MOVI},  //0x09
 
-            {"INC",  &CPU::INC},   //0x09
-            {"ADDL", &CPU::ADDL},  //0x0A
-            {"ADD",  &CPU::ADD},   //0x0B
+            {"INC",  &CPU::INC},   //0x0A
+            {"ADDL", &CPU::ADDL},  //0x0B
+            {"ADD",  &CPU::ADD},   //0x0C
     };
 };
 
@@ -144,7 +145,7 @@ uint8_t CPU::INC() {
 uint8_t CPU::ADDL() {
     uint32_t t = read(arg_regs[0]);
     printf("ADDL [%x (0x%x) + %x]\n", t, arg_regs[0], arg_regs[1]);
-    write(arg_regs[0], t + arg_regs[1]);
+    write(arg_regs[2], t + arg_regs[1]);
     return 0;
 }
 
@@ -152,13 +153,14 @@ uint8_t CPU::ADD() {
     uint32_t t = read(arg_regs[0]);
     uint32_t inc = read(arg_regs[1]);
     printf("ADD [%x (0x%x) + %x (0x%x)]\n", t, arg_regs[0], inc, arg_regs[1]);
-    write(arg_regs[0], t + inc);
+    write(arg_regs[2], t + inc);
     return 0;
 }
 
 uint8_t CPU::EMP() {
     // Do nothing
-    //printf("EMP []\n");
+    // printf("EMP []\n");
+    exit(0);
     return 0;
 }
 
@@ -167,6 +169,14 @@ uint8_t CPU::JMD0() {
         pc = arg_regs[0];
     }
     printf("JMD [%x]\n", arg_regs[0]);
+    return 0;
+}
+
+uint8_t CPU::JMDN() {
+    if (getFlag(FLAGS::N)){
+        pc = arg_regs[0];
+    }
+    printf("JMDN [%x]\n", arg_regs[0]);
     return 0;
 }
 
