@@ -7,26 +7,34 @@
 #include "string"
 #include <algorithm>
 
+
+
+static inline void ltrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
+        return !std::isspace(ch);
+    }));
+}
+
 void XASM::parse(const string &path) {
     ifstream ifs;
     ifs.open(path);
     string line;
     if (ifs.is_open()) {
         while (getline(ifs, line)) {
+            ltrim(line);
             if (line.starts_with("//") or line.empty()) continue;
             program.push_back(line);
         }
         ifs.close();
     }
     uint8_t addr = 0;
-    // Define jump points
+    // Define procedure jump points
     for (int i = 0; i < program.size(); i++) {
         if (program[i].starts_with("proc")){
             string proc_name = program[i].substr(5, program[i].length());
             procedures[proc_name] = addr;
             program.erase(program.begin() + i);
             i--;
-
         }
 
         if (!program[i].starts_with("MEM")) addr++;
@@ -62,7 +70,8 @@ void XASM::writeDirective(const string &com, uint8_t *com_addr) {
             index++;
         }
 
-    } else {
+    }
+    else {
         auto it = std::find_if(
                 cpu->op_table.begin(),
                 cpu->op_table.end(),
@@ -70,13 +79,18 @@ void XASM::writeDirective(const string &com, uint8_t *com_addr) {
                     return instruction.name == op;
                 });
         int op_index = std::distance(cpu->op_table.begin(), it);
+        if (op == "PSHT"){
+            cout << op << endl;
+            cout << hex <<(*com_addr) << endl;
 
+        }
         uint8_t a_op = 0;
         uint8_t b_op = 0;
         uint8_t c_op = 0;
-        if ((op == "JMP" or op == "JMN" or op == "JM0" or op == "JMDN") && procedures.contains(data)){
+        if ((op == "JMP" or op == "JMN" or op == "JM0" or op == "JMDN" or op == "JMD0") && procedures.contains(data)){
             a_op = procedures[data];
         } else {
+
             stringstream ss(data);
             string a,b,c;
             getline(ss, a, ' ');

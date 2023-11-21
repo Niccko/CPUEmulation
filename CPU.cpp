@@ -16,8 +16,9 @@ CPU::CPU() {
             {"CMPI", &CPU::CMPI},  //0x02
 
             {"JMN",  &CPU::JMN},   //0x03
-            {"JMDN",  &CPU::JMDN},   //0x03
+            {"JMDN",  &CPU::JMDN}, //0x03
             {"JMP",  &CPU::JMP},   //0x04
+            {"JMD",  &CPU::JMD},   //0x04
             {"JM0",  &CPU::JM0},   //0x05
             {"JMD0",  &CPU::JMD0}, //0x06
 
@@ -28,6 +29,8 @@ CPU::CPU() {
             {"INC",  &CPU::INC},   //0x0A
             {"ADDL", &CPU::ADDL},  //0x0B
             {"ADD",  &CPU::ADD},   //0x0C
+
+            {"PSHT",  &CPU::PSHT},   //0x0C
     };
 };
 
@@ -159,7 +162,7 @@ uint8_t CPU::ADD() {
 
 uint8_t CPU::EMP() {
     // Do nothing
-    // printf("EMP []\n");
+    printf("EMP []\n");
     exit(0);
     return 0;
 }
@@ -168,7 +171,7 @@ uint8_t CPU::JMD0() {
     if (getFlag(FLAGS::Z)){
         pc = arg_regs[0];
     }
-    printf("JMD [%x]\n", arg_regs[0]);
+    printf("JMD0 [%x]\n", arg_regs[0]);
     return 0;
 }
 
@@ -177,6 +180,18 @@ uint8_t CPU::JMDN() {
         pc = arg_regs[0];
     }
     printf("JMDN [%x]\n", arg_regs[0]);
+    return 0;
+}
+
+uint8_t CPU::PSHT() {
+    printf("%d", read(arg_regs[0]));
+    printf("PSHT [%x]\n", read(arg_regs[0]));
+    return 0;
+}
+
+uint8_t CPU::JMD() {
+    pc = arg_regs[0];
+    printf("JMD [%x]\n", arg_regs[0]);
     return 0;
 }
 

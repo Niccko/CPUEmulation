@@ -67,6 +67,10 @@ private:
 
     uint8_t JMP();
 
+    uint8_t PSHT();
+
+    uint8_t JMD();
+
     uint8_t JMD0();
 
     uint8_t MOV();
